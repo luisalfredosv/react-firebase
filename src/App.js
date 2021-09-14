@@ -1,19 +1,13 @@
 import React from "react";
-import "./App.css";
-import TextField from "@material-ui/core/TextField";
-import Container from "@material-ui/core/Container";
+import { Provider } from "react-redux";
+import AuthRouter from "./router/AuthRouter";
+import { store } from "./store/store";
 
 function App() {
 	return (
-		<>
-			<Container>
-				<TextField
-					id='outlined-basic'
-					label='Outlined'
-					variant='outlined'
-				/>
-			</Container>
-		</>
+		<Provider store={store}>
+			<AuthRouter />
+		</Provider>
 	);
 }
 
