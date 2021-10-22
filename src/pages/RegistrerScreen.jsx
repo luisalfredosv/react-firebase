@@ -11,9 +11,51 @@ import {
 	Grid,
 	Link,
 } from "@material-ui/core";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { registrer } from "../actions/authActions";
 
 const RegistrerScreen = () => {
-	const handleSubmit = () => {};
+	const dispatch = useDispatch();
+
+	const [data, setData] = useState({
+		fullName: "",
+		email: "",
+		password: "",
+		confirmPassword: "",
+	});
+
+	const { fullName, email, password, confirmPassword } = data;
+
+	const handleChange = (e) => {
+		const value = e.target.value;
+		setData({
+			...data,
+			[e.target.name]: value,
+		});
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		if (email.trim() === "" || !email.trim().includes("@")) {
+			return;
+		}
+
+		if (fullName.trim().length < 3) {
+			return;
+		}
+
+		if (password.trim().length < 6) {
+			return;
+		} else {
+			if (password.trim() !== confirmPassword.trim()) {
+				return;
+			}
+		}
+
+		dispatch(registrer(email, password, fullName));
+	};
 
 	return (
 		<Container component='main' maxWidth='xs'>
@@ -30,55 +72,56 @@ const RegistrerScreen = () => {
 				<Typography component='h1' variant='h5'>
 					Sign up
 				</Typography>
-				<Box
-					component='form'
-					noValidate
-					onSubmit={handleSubmit}
-					sx={{ mt: 3 }}
-				>
+				<Box component='form' onSubmit={handleSubmit} sx={{ mt: 3 }}>
 					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6}>
+						<Grid item xs={12}>
 							<TextField
-								autoComplete='fname'
-								name='firstName'
+								onChange={handleChange}
+								value={fullName}
+								name='fullName'
 								required
 								fullWidth
-								id='firstName'
-								label='First Name'
+								label='Full Name'
+								autoComplete='fullname'
 								variant='outlined'
-								autoFocus
-							/>
-						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								required
-								fullWidth
-								id='lastName'
-								label='Last Name'
-								name='lastName'
-								autoComplete='lname'
-								variant='outlined'
+								type='text'
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
+								onChange={handleChange}
+								value={email}
+								name='email'
 								required
 								fullWidth
-								id='email'
 								label='Email Address'
-								name='email'
 								autoComplete='email'
 								variant='outlined'
+								type='email'
 							/>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
+								onChange={handleChange}
+								value={password}
+								name='password'
 								required
 								fullWidth
-								name='password'
 								label='Password'
 								type='password'
-								id='password'
+								variant='outlined'
+								autoComplete='new-password'
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								onChange={handleChange}
+								value={confirmPassword}
+								name='confirmPassword'
+								required
+								fullWidth
+								label='Confirm Password'
+								type='password'
 								variant='outlined'
 								autoComplete='new-password'
 							/>

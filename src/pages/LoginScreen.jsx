@@ -11,19 +11,46 @@ import {
 	Grid,
 	Link,
 } from "@material-ui/core";
-
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import GoogleButton from "react-google-button";
 
-import { googleLogin } from "../actions/authActions";
+import { googleLogin, emailAndPasswordLogin } from "../actions/authActions";
 
 const LoginScreen = () => {
 	const dispatch = useDispatch();
 
-	const handleSubmit = () => {};
+	const [data, setData] = useState({
+		email: "",
+		password: "",
+	});
 
-	const handleGoogleLogin = () => {
-		dispatch(googleLogin("12345", "Luis"));
+	const { email, password } = data;
+
+	const handleChange = (e) => {
+		const value = e.target.value;
+		setData({
+			...data,
+			[e.target.name]: value,
+		});
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		if (email.trim() === "" || !email.trim().includes("@")) {
+			return;
+		}
+		if (password.trim().length < 6) {
+			return;
+		}
+
+		dispatch(emailAndPasswordLogin(email, password));
+	};
+
+	const handleGoogleLogin = (e) => {
+		e.preventDefault();
+		dispatch(googleLogin());
 	};
 
 	return (
@@ -41,33 +68,30 @@ const LoginScreen = () => {
 				<Typography component='h1' variant='h5'>
 					Sign in
 				</Typography>
-				<Box
-					component='form'
-					onSubmit={handleSubmit}
-					noValidate
-					sx={{ mt: 1 }}
-				>
+				<Box component='form' onSubmit={handleSubmit} sx={{ mt: 1 }}>
 					<TextField
-						margin='normal'
-						required
-						fullWidth
-						id='email'
-						label='Email Address'
+						onChange={handleChange}
+						value={email}
 						name='email'
+						required
+						fullWidth
+						label='Email Address'
 						autoComplete='email'
-						autoFocus
 						variant='outlined'
+						type='email'
 					/>
+
 					<TextField
 						margin='normal'
 						required
 						fullWidth
-						name='password'
 						label='Password'
-						type='password'
-						id='password'
 						autoComplete='current-password'
 						variant='outlined'
+						name='password'
+						onChange={handleChange}
+						value={password}
+						type='password'
 					/>
 					<FormControlLabel
 						control={<Checkbox value='remember' color='primary' />}
@@ -92,6 +116,7 @@ const LoginScreen = () => {
 						<Grid item xs={6}>
 							<GoogleButton
 								style={{
+									display: "flex",
 									width: 187,
 									height: 50,
 									borderRadius: 3,
